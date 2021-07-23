@@ -1,0 +1,47 @@
+{
+  "name": "ipcam",
+  "type": "flogo:trigger",
+  "version": "1.5.0",
+  "title": "Get images from IP Camera",
+  "description": "Get images from IP Camera",
+  "ref": "github.com/r2d2-ai/cam/trigger/ipcam",
+  "settings": [],
+  "output": [
+    {
+      "name": "image",
+      "type": "any",
+      "description": "The imgae received from the IP Camera"
+    }
+  ],
+  "handler": {
+    "settings": [
+      {
+        "name": "protocol",
+        "type": "string",
+        "required": true,
+        "description": "The protocol used to connect to the IP Camera"
+      },
+      {
+        "name": "host",
+        "type": "string",
+        "required": true,
+        "description": "The IP Camera to connect to"
+      },
+      {
+        "name": "user",
+        "type": "string",
+        "description": "The IP Camera User"
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "The IP Camera Password"
+      },
+      {
+        "name": "VideoUri",
+        "type": "string",
+        "description": "The URI of the Video feed"
+      }
+    ]
+  }
+}
