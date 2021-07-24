@@ -90,7 +90,7 @@ func (camHnd *CameraHandler) startStream() error {
 	user := camHnd.settings.User
 	password := camHnd.settings.Password
 	videoUri := camHnd.settings.VideoURI
-
+	camHnd.logger.Infof("Start IP Cam %v stream", host)
 	cap, err := gocv.OpenVideoCapture("rtsp://" + url.QueryEscape(user) + ":" + url.QueryEscape(password) + "@" + host + "/" + url.QueryEscape(videoUri))
 
 	if err != nil {
@@ -106,7 +106,9 @@ func (camHnd *CameraHandler) startStream() error {
 func (camHnd *CameraHandler) run() {
 	var err error
 	img := gocv.NewMat()
+	host := camHnd.settings.Host
 
+	camHnd.logger.Infof("Running IP Cam %v stream", host)
 	for {
 		if <-camHnd.done {
 			break
@@ -114,16 +116,16 @@ func (camHnd *CameraHandler) run() {
 
 		camHnd.cap.Read(&img)
 		if img.Empty() {
-			//blank frame?
+			camHnd.logger.Errorf("Received blank frame IP Cam %v", host)
 			continue
 		}
 
-		image := img.ToBytes()
+		image := img //.ToBytes()
 		output := &Output{}
 		output.Image = image
 		_, err = camHnd.handler.Handle(context.Background(), output)
 		if err != nil {
-			camHnd.logger.Errorf("Failed to process image")
+			camHnd.logger.Errorf("Failed to process frame for IP Cam %v", host)
 		}
 	}
 }
