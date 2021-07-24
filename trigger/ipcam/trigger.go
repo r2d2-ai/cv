@@ -111,15 +111,23 @@ type FPSCounter struct {
 func (counter *FPSCounter) FPS() float64 {
 	var total int64 = 0
 	times := counter.times
+
+	if len(times) > 1000 {
+		times = times[len(times)-1000:]
+		counter.times = times
+	}
+
 	for _, val := range times {
 		total += val
 	}
+
 	return float64(total) / float64(len(times))
 }
 
 func (camHnd *CameraHandler) run() {
 	var err error
 	counter := &FPSCounter{}
+	counter.times = make([]int64, 1100)
 
 	img := gocv.NewMat()
 	host := camHnd.settings.Host
