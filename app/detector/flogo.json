@@ -1,78 +1,75 @@
 {
-    "name": "Detector",
-    "type": "flogo:app",
-    "version": "0.0.1",
-    "appModel": "1.1.0",
-    "description": "",
-    "imports": [
-      "github.com/r2d2-ai/contrib/activity/log@v1.5.0",
-      "github.com/r2d2-ai/cam/trigger/ipcam@v1.5.0",
-      "github.com/r2d2-ai/flow@v1.5.0"
-    ],
-    "triggers": [
-      {
-        "id": "receive_http_message",
-        "ref": "#rest",
-        "name": "Receive HTTP Message",
-        "description": "Simple REST Trigger",
-        "settings": {
-          "port": 8080
-        },
-        "handlers": [
-          {
+  "name": "Detector",
+  "type": "flogo:app",
+  "version": "0.0.1",
+  "appModel": "1.1.0",
+  "description": "",
+  "imports": [
+    "github.com/r2d2-ai/contrib/activity/log@v1.5.0",
+    "github.com/r2d2-ai/cam/trigger/ipcam@v1.5.0",
+    "github.com/r2d2-ai/flow@v1.5.0"
+  ],
+  "triggers": [
+    {
+      "id": "ai_box_ipcam",
+      "ref": "#ipcam",
+      "name": "IP Cam Feed",
+      "description": "IP Cam Feed",
+      "handlers": [
+        {
+          "settings": {
+            "protocol": "RSTP",
+            "host": "192.168.50.195",
+            "user": "admin",
+            "password": "P$rolaMeaCAM",
+            "videoUri": "11"
+          },
+          "action": {
+            "ref": "#flow",
             "settings": {
-              "method": "GET",
-              "path": "/test"
+              "flowURI": "res://flow:detect"
             },
-            "action": {
-              "ref": "#flow",
-              "settings": {
-                "flowURI": "res://flow:get_name"
-              },
+            "input": {
+              "image": "=$.image"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:detect",
+      "data": {
+        "name": "Detect",
+        "metadata": {
+          "input": [
+            {
+              "name": "image",
+              "type": "any"
+            },
+            {
+              "name": "fps",
+              "type": "double"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "id": "log_2",
+            "name": "Log",
+            "description": "Logs a message",
+            "activity": {
+              "ref": "#log",
               "input": {
-              },
-              "output": {
-                "code": 200
+                "message": "=$flow.fps",
+                "addDetails": false,
+                "usePrint": false
               }
             }
           }
         ]
       }
-    ],
-    "resources": [
-      {
-        "id": "flow:get_name",
-        "data": {
-          "name": "GetName",
-          "metadata": {
-            "input": [
-              {
-                "name": "name",
-                "type": "string"
-              }
-            ],
-            "output": [
-              {
-                "name": "greeting",
-                "type": "string"
-              }
-            ]
-          },
-          "tasks": [
-            {
-              "id": "log_2",
-              "name": "Log",
-              "description": "Logs a message",
-              "activity": {
-                "ref": "#log",
-                "input": {
-                  "message": "Hello from Flogo",
-                  "addDetails": false
-                }
-              }
-            }
-          ]
-        }
-      }
-    ]
-  }
+    }
+  ]
+}

@@ -3,6 +3,7 @@ package ipcam
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"github.com/r2d2-ai/core/data/metadata"
 	"github.com/r2d2-ai/core/support/log"
@@ -103,13 +104,29 @@ func (camHnd *CameraHandler) startStream() error {
 	return nil
 }
 
+type FPSCounter struct {
+	times []int64
+}
+
+func (counter *FPSCounter) FPS() float64 {
+	var total int64 = 0
+	times := counter.times
+	for _, val := range times {
+		total += val
+	}
+	return float64(total) / float64(len(times))
+}
+
 func (camHnd *CameraHandler) run() {
 	var err error
+	counter := &FPSCounter{}
+
 	img := gocv.NewMat()
 	host := camHnd.settings.Host
 
 	camHnd.logger.Infof("Running IP Cam %v stream", host)
 	for {
+		start := time.Now()
 		if <-camHnd.done {
 			break
 		}
@@ -119,10 +136,14 @@ func (camHnd *CameraHandler) run() {
 			camHnd.logger.Errorf("Received blank frame IP Cam %v", host)
 			continue
 		}
+		duration := time.Since(start).Milliseconds()
+
+		counter.times = append(counter.times, duration)
 
 		image := img //.ToBytes()
 		output := &Output{}
 		output.Image = image
+		output.FPS = 1000. / counter.FPS()
 		_, err = camHnd.handler.Handle(context.Background(), output)
 		if err != nil {
 			camHnd.logger.Errorf("Failed to process frame for IP Cam %v", host)
