@@ -2,12 +2,12 @@
   "name": "Detector",
   "type": "flogo:app",
   "version": "0.0.1",
-  "appModel": "1.1.0",
+  "appModel": "1.20.0",
   "description": "",
   "imports": [
-    "github.com/r2d2-ai/contrib/activity/log@v1.5.0",
-    "github.com/r2d2-ai/cam/trigger/ipcam@v1.5.0",
-    "github.com/r2d2-ai/flow@v1.5.0"
+    "github.com/r2d2-ai/contrib/activity/log@v1.20.0",
+    "github.com/r2d2-ai/cam/trigger/ipcam@v1.20.0",
+    "github.com/r2d2-ai/flow@v1.20.0"
   ],
   "triggers": [
     {
