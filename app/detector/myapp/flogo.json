@@ -1,5 +1,5 @@
 {
-  "name": "Detector",
+  "name": "myapp",
   "type": "flogo:app",
   "version": "0.0.1",
   "appModel": "1.20.0",
