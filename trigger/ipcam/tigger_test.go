@@ -3,6 +3,7 @@ package ipcam
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/r2d2-ai/core/action"
 	"github.com/r2d2-ai/core/support/test"
@@ -45,7 +46,7 @@ func TestIPCamTrigger_Initializer(t *testing.T) {
 
 	err = trg.Start()
 	assert.Nil(t, err)
-
+	time.Sleep(time.Second * 5)
 	err = trg.Stop()
 	assert.Nil(t, err)
 }

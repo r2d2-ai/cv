@@ -5,9 +5,9 @@
   "appModel": "1.20.0",
   "description": "",
   "imports": [
-    "github.com/r2d2-ai/contrib/activity/log@v1.20.0",
-    "github.com/r2d2-ai/cam/trigger/ipcam@v1.20.1",
-    "github.com/r2d2-ai/flow@v1.20.0"
+    "github.com/r2d2-ai/contrib/activity/log",
+    "github.com/r2d2-ai/cam/trigger/ipcam",
+    "github.com/r2d2-ai/flow"
   ],
   "triggers": [
     {
@@ -30,7 +30,7 @@
               "flowURI": "res://flow:detect"
             },
             "input": {
-              "image": "=$.image"
+              "fps": "=$.fps"
             }
           }
         }
@@ -44,10 +44,6 @@
         "name": "Detect",
         "metadata": {
           "input": [
-            {
-              "name": "image",
-              "type": "any"
-            },
             {
               "name": "fps",
               "type": "double"

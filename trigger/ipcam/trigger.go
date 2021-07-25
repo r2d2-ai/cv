@@ -65,7 +65,8 @@ func (t *Trigger) Initialize(ctx trigger.InitContext) error {
 		camHnd.settings = s
 		camHnd.handler = handler
 		camHnd.logger = t.logger
-		camHnd.done = make(chan bool)
+		// camHnd.done = make(chan bool)
+		// camHnd.done <- false
 		t.cameraHandlers = append(t.cameraHandlers, camHnd)
 	}
 	return nil
@@ -131,24 +132,23 @@ func (camHnd *CameraHandler) run() {
 	camHnd.logger.Infof("Running IP Cam %v stream", host)
 	for {
 		start := time.Now()
-		if <-camHnd.done {
-			break
-		}
-
+		// if <-camHnd.done {
+		// 	break
+		// }
 		camHnd.cap.Read(&img)
 		if img.Empty() {
 			camHnd.logger.Errorf("Received blank frame IP Cam %v", host)
 			continue
 		}
+
 		duration := time.Since(start).Milliseconds()
-
 		*counter = append(*counter, duration)
-
 		image := img //.ToBytes()
 		output := &Output{}
 		output.Image = image
 		output.FPS = 1000. / counter.FPS()
 		_, err = camHnd.handler.Handle(context.Background(), output)
+
 		if err != nil {
 			camHnd.logger.Errorf("Failed to process frame for IP Cam %v", host)
 		}
