@@ -104,30 +104,26 @@ func (camHnd *CameraHandler) startStream() error {
 	return nil
 }
 
-type FPSCounter struct {
-	times []int64
-}
+type FPSCounter []int64
 
 func (counter *FPSCounter) FPS() float64 {
 	var total int64 = 0
-	times := counter.times
-
-	if len(times) > 1000 {
-		times = times[len(times)-1000:]
-		counter.times = times
+	slice := *counter
+	if len(slice) > 1000 {
+		*counter = slice[len(*counter)-1000:]
 	}
 
-	for _, val := range times {
+	for _, val := range *counter {
 		total += val
 	}
 
-	return float64(total) / float64(len(times))
+	return float64(total) / float64(len(*counter))
 }
 
 func (camHnd *CameraHandler) run() {
 	var err error
-	counter := &FPSCounter{}
-	counter.times = make([]int64, 1100)
+	var counter *FPSCounter = new(FPSCounter)
+	*counter = make([]int64, 1100)
 
 	img := gocv.NewMat()
 	host := camHnd.settings.Host
@@ -146,7 +142,7 @@ func (camHnd *CameraHandler) run() {
 		}
 		duration := time.Since(start).Milliseconds()
 
-		counter.times = append(counter.times, duration)
+		*counter = append(*counter, duration)
 
 		image := img //.ToBytes()
 		output := &Output{}
