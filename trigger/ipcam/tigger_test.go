@@ -25,7 +25,9 @@ const testConfig string = `{
 		  "host": "192.168.50.195",
 		  "user": "admin",
 		  "password": "P$rolaMeaCAM",
-		  "videoUri": "11"
+		  "videoUri": "11",
+		  "groupId": "group-1",
+		  "cameraId": "cam-1"
 		}
 	  }
 	]

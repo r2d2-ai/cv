@@ -1,7 +1,7 @@
 {
   "name": "ipcam",
   "type": "flogo:trigger",
-  "version": "1.20.2",
+  "version": "1.20.5",
   "title": "Get images from IP Camera",
   "description": "Get images from IP Camera",
   "ref": "github.com/r2d2-ai/cam/trigger/ipcam",
@@ -10,7 +10,17 @@
     {
       "name": "image",
       "type": "any",
-      "description": "The imgae received from the IP Camera"
+      "description": "The image received from the IP Camera"
+    },
+    {
+      "name": "cameraId",
+      "type": "string",
+      "description": "The camera identifier"
+    },
+    {
+      "name": "groupId",
+      "type": "string",
+      "description": "The camera group identifier"
     }
   ],
   "handler": {
@@ -38,9 +48,19 @@
         "description": "The IP Camera Password"
       },
       {
-        "name": "VideoUri",
+        "name": "videoUri",
         "type": "string",
         "description": "The URI of the Video feed"
+      },
+      {
+        "name": "cameraId",
+        "type": "string",
+        "description": "Camera identifier"
+      },
+      {
+        "name": "groupId",
+        "type": "string",
+        "description": "Camera group identifier"
       }
     ]
   }
