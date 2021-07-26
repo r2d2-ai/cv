@@ -46,7 +46,7 @@ func TestIPCamTrigger_Initializer(t *testing.T) {
 
 	err = trg.Start()
 	assert.Nil(t, err)
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 1)
 	err = trg.Stop()
 	assert.Nil(t, err)
 }

@@ -124,8 +124,6 @@ func (camHnd *CameraHandler) run() {
 	var counter *FPSCounter = new(FPSCounter)
 	*counter = make([]int64, 0)
 
-	var errors uint = 0
-
 	img := gocv.NewMat()
 	host := camHnd.settings.Host
 
