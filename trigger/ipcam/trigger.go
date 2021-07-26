@@ -115,14 +115,16 @@ func (counter *FPSCounter) FPS() float64 {
 	for _, val := range *counter {
 		total += val
 	}
-
-	return float64(total) / float64(len(*counter))
+	fps := 1000. / (float64(total) / float64(len(*counter)))
+	return fps
 }
 
 func (camHnd *CameraHandler) run() {
 	var err error
 	var counter *FPSCounter = new(FPSCounter)
-	*counter = make([]int64, 1100)
+	*counter = make([]int64, 0)
+
+	var errors uint = 0
 
 	img := gocv.NewMat()
 	host := camHnd.settings.Host
@@ -139,21 +141,25 @@ func (camHnd *CameraHandler) run() {
 			camHnd.cap.Read(&img)
 		}
 
-		if img.Empty() {
-			camHnd.logger.Errorf("Received blank frame IP Cam %v", host)
-			continue
-		}
+		// if img.Empty() {
+		// 	camHnd.logger.Errorf("Received blank frame IP Cam %v", host)
+		// 	errors += 1
+		// 	if errors > 100 {
+		// 		camHnd.logger.Errorf("Received too many blank frames from IP Cam %v", host)
+		// 		return
+		// 	}
+		// 	continue
+		// }
 
 		duration := time.Since(start).Milliseconds()
 		*counter = append(*counter, duration)
-		image := img //.ToBytes()
 		output := &Output{}
-		output.Image = image
-		output.FPS = 1000. / counter.FPS()
+		output.Image = &img //send pointer
+		output.FPS = counter.FPS()
 		_, err = camHnd.handler.Handle(context.Background(), output)
 
 		if err != nil {
-			camHnd.logger.Errorf("Failed to process frame for IP Cam %v", host)
+			camHnd.logger.Errorf("Failed to handle frame for IP Cam %v", host)
 		}
 	}
 }
