@@ -24,7 +24,7 @@ type Output struct {
 func (o *Output) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"image":    o.Image,
-		"groupdId": o.GroupdId,
+		"groupId":  o.GroupdId,
 		"cameraId": o.CameraId,
 	}
 }
