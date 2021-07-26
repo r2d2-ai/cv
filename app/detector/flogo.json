@@ -30,7 +30,8 @@
               "flowURI": "res://flow:detect"
             },
             "input": {
-              "fps": "=$.fps"
+              "fps": "=$.fps",
+              "image":"=$.image"
             }
           }
         }
@@ -47,6 +48,10 @@
             {
               "name": "fps",
               "type": "double"
+            },
+            {
+              "name": "image",
+              "type": "any"
             }
           ]
         },

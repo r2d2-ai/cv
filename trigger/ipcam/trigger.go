@@ -44,10 +44,10 @@ type Trigger struct {
 }
 
 type CameraHandler struct {
+	shutdown chan bool
 	handler  trigger.Handler
 	settings *HandlerSettings
 	cap      *gocv.VideoCapture
-	done     chan bool
 	logger   log.Logger
 	id       string
 }
@@ -65,8 +65,6 @@ func (t *Trigger) Initialize(ctx trigger.InitContext) error {
 		camHnd.settings = s
 		camHnd.handler = handler
 		camHnd.logger = t.logger
-		// camHnd.done = make(chan bool)
-		// camHnd.done <- false
 		t.cameraHandlers = append(t.cameraHandlers, camHnd)
 	}
 	return nil
@@ -100,7 +98,7 @@ func (camHnd *CameraHandler) startStream() error {
 	}
 
 	camHnd.cap = cap
-
+	camHnd.shutdown = make(chan bool)
 	camHnd.id = "SomeId"
 	return nil
 }
@@ -130,12 +128,17 @@ func (camHnd *CameraHandler) run() {
 	host := camHnd.settings.Host
 
 	camHnd.logger.Infof("Running IP Cam %v stream", host)
+
 	for {
 		start := time.Now()
-		// if <-camHnd.done {
-		// 	break
-		// }
-		camHnd.cap.Read(&img)
+		select {
+		case <-camHnd.shutdown:
+			camHnd.logger.Infof("Stopping IP Cam %v stream", host)
+			return
+		default:
+			camHnd.cap.Read(&img)
+		}
+
 		if img.Empty() {
 			camHnd.logger.Errorf("Received blank frame IP Cam %v", host)
 			continue
@@ -157,8 +160,8 @@ func (camHnd *CameraHandler) run() {
 
 // Stop implements util.Managed.Stop
 func (t *Trigger) Stop() error {
-	for _, camHdl := range t.cameraHandlers {
-		camHdl.done <- true
+	for _, camHnd := range t.cameraHandlers {
+		camHnd.shutdown <- true
 	}
 	return nil
 }
